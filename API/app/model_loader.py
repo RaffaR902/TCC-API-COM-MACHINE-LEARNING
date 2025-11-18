@@ -2,14 +2,29 @@ import pickle
 from pathlib import Path
 
 class ModelLoader:
+    """
+    Classe responsável por carregar os modelos de previsão usados pela API.
+    Ela centraliza o carregamento para evitar recarregar arquivos .pkl
+    a cada requisição, melhorando a performance.
+    """
+
     def __init__(self):
+        # Caminho base onde os modelos .pkl estão armazenados
+        # (pasta: /app/models)
         base_path = Path(__file__).resolve().parent.parent / "models"
 
+        # Carrega o modelo de previsão de venda
         self.modelo_venda = self.load_model(base_path / "modelo_venda.pkl")
+
+        # Carrega o modelo de previsão de aluguel
         self.modelo_aluguel = self.load_model(base_path / "modelo_aluguel.pkl")
 
     def load_model(self, path: Path):
+        """
+        Carrega um arquivo .pkl do caminho informado e retorna o modelo.
+        """
         with open(path, "rb") as f:
             return pickle.load(f)
 
+# Instância única da classe, utilizada pelos endpoints
 model_loader = ModelLoader()
