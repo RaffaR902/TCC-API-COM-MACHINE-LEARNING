@@ -27,15 +27,15 @@ def status_api():
     }
 
     for nome, caminho in modelos_esperados.items():
-        status["modelos"][nome] = "OK" if caminho.exists() else "Arquivo não encontrado"
+        status["modelos"][nome] = "OK" if caminho.exists() else "Arquivo do modelo não encontrado"
 
     # Verificar se os modelos estão carregados
     status["modelos_carregados"] = {
-        "venda": "OK" if model_loader.modelo_venda else "Erro",
-        "aluguel": "OK" if model_loader.modelo_aluguel else "Erro"
+        "venda": "OK" if model_loader.modelo_venda else "Erro: Não foi possível carregar o modelo de venda",
+        "aluguel": "OK" if model_loader.modelo_aluguel else "Erro: Não foi possível carregar o modelo de aluguel"
     }
 
-    # Rodar uma previsão simples (não precisa ser real, só para testar funcionamento)
+    # Rodar uma previsão simples (para testar o funcionamento)
     try:
         X_teste = [[50, 2, 1, 1, 1, 1, "apartamento", "Centro"]]
         _ = model_loader.modelo_venda.predict(X_teste)
