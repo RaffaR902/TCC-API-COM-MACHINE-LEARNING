@@ -40,17 +40,3 @@ def listar_cidades(estado: str):
 
     return {"estado": estado, "cidades": ESTADOS[estado]}
 
-@router.get("/status")
-def status():
-    """
-    Informa o status atual da API.
-    Útil para monitoramento e verificações rápidas de saúde.
-    """
-    return {"status": "OK", "mensagem": "API operando normalmente"}
-
-@router.get("/modelo/versao")
-def versao_modelo():
-    """
-    Retorna a versão atual do modelo de machine learning utilizado pela API.
-    """
-    return {"versao_modelo": "1.0.0"}
