@@ -1,3 +1,4 @@
+import pandas as pd
 from fastapi import APIRouter
 from app.schemas import ImovelEntrada, VendaResposta, LocacaoResposta, CompletoResposta
 from app.model_loader import model_loader
@@ -15,18 +16,19 @@ def montar_features(imovel: ImovelEntrada):
     tem_suite = 1 if imovel.suites > 0 else 0
     tem_vaga = 1 if imovel.vagas > 0 else 0
 
-    # Ordem das features deve ser exatamente igual à usada no treinamento:
-    # ['area_util', 'quartos', 'suites', 'vagas', 'tem_suite', 'tem_vaga', 'tipo', 'bairro']
-    return [[
-        imovel.area_util,
-        imovel.quartos,
-        imovel.suites,
-        imovel.vagas,
-        tem_suite,
-        tem_vaga,
-        imovel.tipo,
-        imovel.bairro
-    ]]
+    # Ordem das features deve ser exatamente igual à usada no treinamento
+    df = pd.DataFrame([{
+        "area_util": imovel.area_util,
+        "quartos": imovel.quartos,
+        "suites": imovel.suites,
+        "vagas": imovel.vagas,
+        "tem_suite": tem_suite,
+        "tem_vaga": tem_vaga,
+        "tipo": imovel.tipo,
+        "bairro": imovel.bairro
+    }])
+
+    return df
 
 
 @router.post("/venda", response_model=VendaResposta)
