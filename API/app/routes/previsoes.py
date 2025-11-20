@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.schemas import ImovelEntrada, VendaResposta, AluguelResposta, CompletoResposta
+from app.schemas import ImovelEntrada, VendaResposta, LocacaoResposta, CompletoResposta
 from app.model_loader import model_loader
 
 router = APIRouter(prefix="/prever", tags=["Previsões"])
@@ -39,22 +39,22 @@ def prever_venda(imovel: ImovelEntrada):
     return {"valor_previsto_venda": float(pred)}
 
 
-@router.post("/aluguel", response_model=AluguelResposta)
-def prever_aluguel(imovel: ImovelEntrada):
-    """Retorna o valor previsto de aluguel de um imóvel."""
+@router.post("/locacao", response_model=LocacaoResposta)
+def prever_locacao(imovel: ImovelEntrada):
+    """Retorna o valor previsto de locacao de um imóvel."""
     X = montar_features(imovel)
-    pred = model_loader.modelo_aluguel.predict(X)[0]
-    return {"valor_previsto_aluguel": float(pred)}
+    pred = model_loader.modelo_locacao.predict(X)[0]
+    return {"valor_previsto_locacao": float(pred)}
 
 
 @router.post("/completo", response_model=CompletoResposta)
 def prever_completo(imovel: ImovelEntrada):
-    """Retorna previsão conjunta de valor de venda e aluguel."""
+    """Retorna previsão conjunta de valor de venda e locacao."""
     X = montar_features(imovel)
     venda = model_loader.modelo_venda.predict(X)[0]
-    aluguel = model_loader.modelo_aluguel.predict(X)[0]
+    locacao = model_loader.modelo_locacao.predict(X)[0]
 
     return {
         "valor_previsto_venda": float(venda),
-        "valor_previsto_aluguel": float(aluguel),
+        "valor_previsto_locacao": float(locacao),
     }

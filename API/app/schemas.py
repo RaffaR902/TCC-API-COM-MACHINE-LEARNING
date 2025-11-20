@@ -27,16 +27,16 @@ class VendaResposta(BaseModel):
     valor_previsto_venda: float
 
 
-class AluguelResposta(BaseModel):
+class LocacaoResposta(BaseModel):
     """
-    Estrutura de resposta para previsão de valor de aluguel.
+    Estrutura de resposta para previsão de valor de locacao.
     """
-    valor_previsto_aluguel: float
+    valor_previsto_locacao: float
 
 
 class CompletoResposta(BaseModel):
     """
-    Estrutura de resposta contendo previsão de venda e aluguel juntas.
+    Estrutura de resposta contendo previsão de venda e locacao juntas.
     """
     valor_previsto_venda: float
-    valor_previsto_aluguel: float
+    valor_previsto_locacao: float

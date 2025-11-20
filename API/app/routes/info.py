@@ -23,7 +23,7 @@ def status_api():
     base = Path(__file__).resolve().parent.parent / "models"
     modelos_esperados = {
         "modelo_venda.joblib": base / "modelo_venda.joblib",
-        "modelo_aluguel.joblib": base / "modelo_aluguel.joblib"
+        "modelo_locacao.joblib": base / "modelo_locacao.joblib"
     }
 
     for nome, caminho in modelos_esperados.items():
@@ -32,7 +32,7 @@ def status_api():
     # Verificar se os modelos estão carregados
     status["modelos_carregados"] = {
         "venda": "OK" if model_loader.modelo_venda else "Erro: Não foi possível carregar o modelo de venda",
-        "aluguel": "OK" if model_loader.modelo_aluguel else "Erro: Não foi possível carregar o modelo de aluguel"
+        "locacao": "OK" if model_loader.modelo_locacao else "Erro: Não foi possível carregar o modelo de locacao"
     }
 
     # Rodar uma previsão simples (para testar o funcionamento)
@@ -45,9 +45,9 @@ def status_api():
 
     try:
         X_teste = [[50, 2, 1, 1, 1, 1, "apartamento", "Centro"]]
-        _ = model_loader.modelo_aluguel.predict(X_teste)
-        status["previsao_teste"]["aluguel"] = "OK"
+        _ = model_loader.modelo_locacao.predict(X_teste)
+        status["previsao_teste"]["locacao"] = "OK"
     except Exception as e:
-        status["previsao_teste"]["aluguel"] = f"Erro: {str(e)}"
+        status["previsao_teste"]["locacao"] = f"Erro: {str(e)}"
 
     return status

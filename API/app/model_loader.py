@@ -1,5 +1,5 @@
-import pickle
 from pathlib import Path
+import joblib
 
 class ModelLoader:
     """
@@ -10,21 +10,20 @@ class ModelLoader:
 
     def __init__(self):
         # Caminho base onde os modelos .joblib estão armazenados
-        # (pasta: /app/models)
         base_path = Path(__file__).resolve().parent.parent / "models"
 
         # Carrega o modelo de previsão de venda
         self.modelo_venda = self.load_model(base_path / "modelo_venda.joblib")
 
-        # Carrega o modelo de previsão de aluguel
-        self.modelo_aluguel = self.load_model(base_path / "modelo_aluguel.joblib")
+        # Carrega o modelo de previsão de locacao
+        self.modelo_locacao = self.load_model(base_path / "modelo_locacao.joblib")
 
     def load_model(self, path: Path):
         """
         Carrega um arquivo .joblib do caminho informado e retorna o modelo.
         """
         with open(path, "rb") as f:
-            return pickle.load(f)
+            return joblib.load(f)
 
 # Instância única da classe, utilizada pelos endpoints
 model_loader = ModelLoader()
