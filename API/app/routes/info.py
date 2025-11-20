@@ -1,5 +1,4 @@
 import pandas as pd
-from pathlib import Path
 from fastapi import APIRouter
 from app.model_loader import model_loader
 
@@ -16,19 +15,8 @@ def status_api():
 
     status = {
         "api": "online",
-        "modelos": {},
         "previsao_teste": {}
     }
-
-    # Verificar existência dos arquivos .joblib
-    base = Path(__file__).resolve().parent.parent / "models"
-    modelos_esperados = {
-        "modelo_locacao.joblib": base / "modelo_locacao.joblib",
-        "modelo_venda.joblib": base / "modelo_venda.joblib",
-    }
-
-    for nome, caminho in modelos_esperados.items():
-        status["modelos"][nome] = "OK" if caminho.exists() else "Arquivo do modelo não encontrado"
 
     # Verificar se os modelos estão carregados
     status["modelos_carregados"] = {
@@ -36,34 +24,26 @@ def status_api():
         "locacao": "OK" if model_loader.modelo_locacao else "Erro: Não foi possível carregar o modelo de locacao"
     }
 
+    # Criar entrada de teste
+    X_teste = pd.DataFrame([{
+        "area_util": 50,
+        "quartos": 2,
+        "suites": 1,
+        "vagas": 1,
+        "tem_suite": 1,
+        "tem_vaga": 1,
+        "tipo": "apartamento",
+        "bairro": "Centro"
+    }])
+
     # Rodar uma previsão simples (para testar o funcionamento)
     try:
-        X_teste = pd.DataFrame([{
-            "area_util": 50,
-            "quartos": 2,
-            "suites": 1,
-            "vagas": 1,
-            "tem_suite": 1,
-            "tem_vaga": 1,
-            "tipo": "apartamento",
-            "bairro": "Centro"
-        }])
         _ = model_loader.modelo_venda.predict(X_teste)
         status["previsao_teste"]["venda"] = "OK"
     except Exception as e:
         status["previsao_teste"]["venda"] = f"Erro: {str(e)}"
 
     try:
-        X_teste = pd.DataFrame([{
-            "area_util": 50,
-            "quartos": 2,
-            "suites": 1,
-            "vagas": 1,
-            "tem_suite": 1,
-            "tem_vaga": 1,
-            "tipo": "apartamento",
-            "bairro": "Centro"
-        }])
         _ = model_loader.modelo_locacao.predict(X_teste)
         status["previsao_teste"]["locacao"] = "OK"
     except Exception as e:

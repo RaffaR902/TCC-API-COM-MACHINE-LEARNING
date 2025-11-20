@@ -7,9 +7,7 @@ router = APIRouter(prefix="/prever", tags=["Previsões"])
 
 def montar_features(imovel: ImovelEntrada):
     """
-    Constroi o vetor de entrada no EXATO formato e ordem usados
-    durante o treinamento do modelo.
-
+    Constroi o vetor de entrada no exato formato e ordem usados durante o treinamento do modelo.
     Essa função evita duplicação de código nos endpoints.
     """
 
