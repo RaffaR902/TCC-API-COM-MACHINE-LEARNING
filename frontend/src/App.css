@@ -1,0 +1,152 @@
+
+:root{
+  --bg-1: #f5f7fa;
+  --bg-2: #c3cfe2;
+  --primary-1: #667eea;
+  --primary-2: #764ba2;
+  --muted: #6b7280;
+  --card: #ffffff;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+/* Estilos gerais do body */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  color: #333;
+}
+
+/* Estrutura principal do app */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: transparent;
+  color: var(--muted);
+}
+
+/* Cabeçalho */
+.header {
+  background: #764ba2; /* leve overlay para contraste sobre o gradiente */
+  color: white;
+  width: 100%;
+  padding: 20px 28px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  display: center;
+  align-items: center;
+  justify-content: space-between;
+  
+    
+}
+
+.header .title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header h1 {
+  font-size: 50;
+  margin: 0;
+  font-weight: 600;
+}
+
+.header p {
+  margin: 0;
+  font-size: 20px;
+  opacity: 0.95;
+}
+
+/* Responsividade para telas menores */
+
+@media (max-width: 768px) {
+  .header {
+    padding: 30px 20px;
+    height: 200px;
+  }
+
+  .header h1 {
+    font-size: 36px;
+  }
+
+  .header p {
+    font-size: 18px;
+  }
+
+  .container {
+    margin: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .header h1 {
+    font-size: 28px;
+  }
+
+  .header p {
+    font-size: 16px;
+  }
+
+  .container {
+    margin: 10px;
+    padding: 10px;
+  }
+}
+
+/* Container principal */
+.container {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 28px auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr 600px;
+  gap: 28px;
+  align-items: start;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: stretch;
+}
+
+@media (max-width: 1000px) {
+  .container {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .right {
+    order: 2;
+  }
+}
+
+/* Rodapé */
+.footer {
+  background: black(255,255,255,0.6);
+  color: var(--muted);
+  text-align: center;
+  padding: 16px 20px;
+  margin-top: auto;
+  font-size: 13px;
+  
+}
+
+.footer p { margin: 2px 0; }
+
+.brand-sub { font-size: 13px; opacity: 0.9 }

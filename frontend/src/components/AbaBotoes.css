@@ -1,0 +1,45 @@
+.aba-botoes {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .aba-botoes {
+    flex-direction: column;
+  }
+}
+
+.aba-btn {
+  padding: 12px 24px;
+  border: 2px solid #667eea;
+  background: white;
+  color: #667eea;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.aba-btn:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.aba-btn.ativo {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 600px) {
+  .aba-btn {
+    width: 100%;
+  }
+}

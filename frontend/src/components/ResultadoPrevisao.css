@@ -1,0 +1,94 @@
+.resultado {
+  margin-top: 20px;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease;
+  width: 100%;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resultado.sucesso {
+  background: var(--card, #ffffff);
+  color: #111827;
+}
+
+.resultado.erro {
+  background: #fff7f7;
+  color: #7f1d1d;
+  border: 1px solid rgba(127,29,29,0.06);
+}
+
+.resultado h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.resultado.erro p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.resultado-completo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .resultado-completo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-valor {
+  padding: 20px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card-valor:hover {
+  transform: translateY(-5px);
+}
+
+.card-valor h4 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.card-valor .valor {
+  font-weight: 700;
+  font-size: 22px;
+  color: #1f2937;
+  margin: 0;
+}
+
+.card-valor.venda {
+  border-left: 4px solid #10b981;
+}
+
+.card-valor.locacao {
+  border-left: 4px solid #f59e0b;
+}
+.card-valor.unico {
+  grid-column: 1 / -1;
+}
+
+.card-valor.unico .valor {
+  font-size: 28px;
+  text-align: center;
+}
