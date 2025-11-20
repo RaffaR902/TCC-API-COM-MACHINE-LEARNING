@@ -10,7 +10,7 @@ def status_api():
     Verifica o status real da API.
     - Checa se os modelos estão carregados
     - Testa uma previsão simples para garantir funcionamento
-    - Valida se os arquivos .pkl existem na pasta correta
+    - Valida se os arquivos .joblib existem na pasta correta
     """
 
     status = {
@@ -19,11 +19,11 @@ def status_api():
         "previsao_teste": {}
     }
 
-    # Verificar existência dos arquivos .pkl
+    # Verificar existência dos arquivos .joblib
     base = Path(__file__).resolve().parent.parent / "models"
     modelos_esperados = {
-        "modelo_venda.pkl": base / "modelo_venda.pkl",
-        "modelo_aluguel.pkl": base / "modelo_aluguel.pkl"
+        "modelo_venda.joblib": base / "modelo_venda.joblib",
+        "modelo_aluguel.joblib": base / "modelo_aluguel.joblib"
     }
 
     for nome, caminho in modelos_esperados.items():
