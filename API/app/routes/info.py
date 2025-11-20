@@ -1,3 +1,4 @@
+import pandas as pd
 from pathlib import Path
 from fastapi import APIRouter
 from app.model_loader import model_loader
@@ -22,8 +23,8 @@ def status_api():
     # Verificar existência dos arquivos .joblib
     base = Path(__file__).resolve().parent.parent / "models"
     modelos_esperados = {
+        "modelo_locacao.joblib": base / "modelo_locacao.joblib",
         "modelo_venda.joblib": base / "modelo_venda.joblib",
-        "modelo_locacao.joblib": base / "modelo_locacao.joblib"
     }
 
     for nome, caminho in modelos_esperados.items():
@@ -37,14 +38,32 @@ def status_api():
 
     # Rodar uma previsão simples (para testar o funcionamento)
     try:
-        X_teste = [[50, 2, 1, 1, 1, 1, "apartamento", "Centro"]]
+        X_teste = pd.DataFrame([{
+            "area_util": 50,
+            "quartos": 2,
+            "suites": 1,
+            "vagas": 1,
+            "tem_suite": 1,
+            "tem_vaga": 1,
+            "tipo": "apartamento",
+            "bairro": "Centro"
+        }])
         _ = model_loader.modelo_venda.predict(X_teste)
         status["previsao_teste"]["venda"] = "OK"
     except Exception as e:
         status["previsao_teste"]["venda"] = f"Erro: {str(e)}"
 
     try:
-        X_teste = [[50, 2, 1, 1, 1, 1, "apartamento", "Centro"]]
+        X_teste = pd.DataFrame([{
+            "area_util": 50,
+            "quartos": 2,
+            "suites": 1,
+            "vagas": 1,
+            "tem_suite": 1,
+            "tem_vaga": 1,
+            "tipo": "apartamento",
+            "bairro": "Centro"
+        }])
         _ = model_loader.modelo_locacao.predict(X_teste)
         status["previsao_teste"]["locacao"] = "OK"
     except Exception as e:

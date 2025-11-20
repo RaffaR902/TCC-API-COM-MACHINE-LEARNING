@@ -39,4 +39,3 @@ def listar_cidades(estado: str):
         return {"erro": "Estado não encontrado."}
 
     return {"estado": estado, "cidades": ESTADOS[estado]}
-
