@@ -1,60 +1,86 @@
+from fastapi import APIRouter, HTTPException
 import pandas as pd
-from fastapi import APIRouter
+
+from app.model_loader import model_loader 
+from app.feature_engineering import preprocessar
 from app.schemas import ImovelEntrada, VendaResposta, LocacaoResposta, CompletoResposta
-from app.model_loader import model_loader
 
-router = APIRouter(prefix="/prever", tags=["Previsões"])
-
-
-def montar_features(imovel: ImovelEntrada):
-    """
-    Constroi o vetor de entrada no exato formato e ordem usados durante o treinamento do modelo.
-    Essa função evita duplicação de código nos endpoints.
-    """
-
-    # Features derivadas usadas no treino
-    tem_suite = 1 if imovel.suites > 0 else 0
-    tem_vaga = 1 if imovel.vagas > 0 else 0
-
-    # Ordem das features deve ser exatamente igual à usada no treinamento
-    df = pd.DataFrame([{
-        "area_util": imovel.area_util,
-        "quartos": imovel.quartos,
-        "suites": imovel.suites,
-        "vagas": imovel.vagas,
-        "tem_suite": tem_suite,
-        "tem_vaga": tem_vaga,
-        "tipo": imovel.tipo,
-        "bairro": imovel.bairro
-    }])
-
-    return df
+router = APIRouter()
 
 
+# ENDPOINT: VENDA
 @router.post("/venda", response_model=VendaResposta)
 def prever_venda(imovel: ImovelEntrada):
-    """Retorna o valor previsto de venda de um imóvel."""
-    X = montar_features(imovel)
+    """
+    Retorna apenas o valor previsto de venda.
+    """
+    # 1. Converter Pydantic -> DataFrame
+    df = pd.DataFrame([imovel.dict()])
+
+    # 2. Preprocessar usando artefatos de VENDA
+    try:
+        X = preprocessar(df, tipo="venda")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro no processamento (venda): {str(e)}")
+
+    # 3. Previsão
+    if not model_loader.modelo_venda:
+        raise HTTPException(status_code=503, detail="Modelo de venda não carregado.")
+    
     pred = model_loader.modelo_venda.predict(X)[0]
+
     return {"valor_previsto_venda": float(pred)}
 
 
+# ENDPOINT: LOCAÇÃO
 @router.post("/locacao", response_model=LocacaoResposta)
 def prever_locacao(imovel: ImovelEntrada):
-    """Retorna o valor previsto de locacao de um imóvel."""
-    X = montar_features(imovel)
+    """
+    Retorna apenas o valor previsto de locação.
+    """
+    # 1. Converter Pydantic -> DataFrame
+    df = pd.DataFrame([imovel.dict()])
+
+    # 2. Preprocessar usando artefatos de locação
+    try:
+        X = preprocessar(df, tipo="locacao")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro no processamento (locacao): {str(e)}")
+
+    # 3. Previsão
+    if not model_loader.modelo_locacao:
+        raise HTTPException(status_code=503, detail="Modelo de locação não carregado.")
+
     pred = model_loader.modelo_locacao.predict(X)[0]
+
     return {"valor_previsto_locacao": float(pred)}
 
 
+# ENDPOINT: COMPLETO (Venda + Locação)
 @router.post("/completo", response_model=CompletoResposta)
 def prever_completo(imovel: ImovelEntrada):
-    """Retorna previsão conjunta de valor de venda e locacao."""
-    X = montar_features(imovel)
-    venda = model_loader.modelo_venda.predict(X)[0]
-    locacao = model_loader.modelo_locacao.predict(X)[0]
+    """
+    Retorna previsão conjunta de valor de venda e locação.
+    Processa os dados duas vezes, pois cada modelo exige transformações específicas.
+    """
+    df_base = pd.DataFrame([imovel.dict()])
+
+    # Previsão Venda 
+    if not model_loader.modelo_venda:
+        raise HTTPException(status_code=503, detail="Modelo de venda não carregado.")
+    
+    # Usar .copy() para não alterar o dataframe original e afetar a próxima etapa
+    X_venda = preprocessar(df_base.copy(), tipo="venda")
+    pred_venda = model_loader.modelo_venda.predict(X_venda)[0]
+
+    # Previsão Locação
+    if not model_loader.modelo_locacao:
+        raise HTTPException(status_code=503, detail="Modelo de locação não carregado.")
+        
+    X_locacao = preprocessar(df_base.copy(), tipo="locacao")
+    pred_locacao = model_loader.modelo_locacao.predict(X_locacao)[0]
 
     return {
-        "valor_previsto_venda": float(venda),
-        "valor_previsto_locacao": float(locacao),
+        "valor_previsto_venda": float(pred_venda),
+        "valor_previsto_locacao": float(pred_locacao),
     }

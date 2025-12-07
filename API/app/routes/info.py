@@ -1,51 +1,57 @@
 import pandas as pd
 from fastapi import APIRouter
 from app.model_loader import model_loader
+from app.feature_engineering import preprocessar
 
 router = APIRouter(prefix="/info", tags=["Informações"])
 
 @router.get("/status")
 def status_api():
-    """
-    Verifica o status real da API.
-    - Checa se os modelos estão carregados
-    - Testa uma previsão simples para garantir funcionamento
-    - Valida se os arquivos .joblib existem na pasta correta
-    """
-
     status = {
         "api": "online",
         "previsao_teste": {}
     }
 
-    # Verificar se os modelos estão carregados
+    # 1. Checar carregamento dos modelos
     status["modelos_carregados"] = {
-        "venda": "OK" if model_loader.modelo_venda else "Erro: Não foi possível carregar o modelo de venda",
-        "locacao": "OK" if model_loader.modelo_locacao else "Erro: Não foi possível carregar o modelo de locacao"
+        "venda": "OK" if model_loader.modelo_venda else "Erro: Modelo venda OFF",
+        "locacao": "OK" if model_loader.modelo_locacao else "Erro: Modelo locacao OFF"
     }
 
-    # Criar entrada de teste
-    X_teste = pd.DataFrame([{
-        "area_util": 50,
+    # 2. Criar dados brutos de teste
+    # Incluímos 'cidade' pois é obrigatório
+    X_teste_raw = pd.DataFrame([{
+        "area_util": 65,
         "quartos": 2,
         "suites": 1,
         "vagas": 1,
-        "tem_suite": 1,
-        "tem_vaga": 1,
         "tipo": "apartamento",
-        "bairro": "Centro"
+        "bairro": "Centro",
+        "cidade": "São Paulo"
     }])
 
-    # Rodar uma previsão simples (para testar o funcionamento)
+    # 3. Testar Venda
     try:
-        _ = model_loader.modelo_venda.predict(X_teste)
-        status["previsao_teste"]["venda"] = "OK"
+        # preprocessar agora insere automaticamente 'objetivo', 'preco_medio_bairro', etc.
+        X_venda = preprocessar(X_teste_raw.copy(), tipo='venda')
+        
+        if model_loader.modelo_venda:
+            _ = model_loader.modelo_venda.predict(X_venda)
+            status["previsao_teste"]["venda"] = "OK"
+        else:
+            status["previsao_teste"]["venda"] = "Modelo OFF"
     except Exception as e:
         status["previsao_teste"]["venda"] = f"Erro: {str(e)}"
 
+    # 4. Testar Locação
     try:
-        _ = model_loader.modelo_locacao.predict(X_teste)
-        status["previsao_teste"]["locacao"] = "OK"
+        X_locacao = preprocessar(X_teste_raw.copy(), tipo='locacao')
+        
+        if model_loader.modelo_locacao:
+            _ = model_loader.modelo_locacao.predict(X_locacao)
+            status["previsao_teste"]["locacao"] = "OK"
+        else:
+            status["previsao_teste"]["locacao"] = "Modelo OFF"
     except Exception as e:
         status["previsao_teste"]["locacao"] = f"Erro: {str(e)}"
 

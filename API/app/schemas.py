@@ -8,16 +8,13 @@ class ImovelEntrada(BaseModel):
     """
 
     tipo: str          # Tipo do imóvel (ex: "Apartamento", "Casa")
-    bairro: str        # Bairro do imóvel — importante para o OneHotEncoder
+    bairro: str        # Bairro do imóvel
+    cidade: str        # Cidade do imóvel
+    
     area_util: float   # Área útil em metros quadrados (float)
-
     quartos: int       # Número de quartos
     suites: int        # Número de suítes
     vagas: int         # Número de vagas de garagem
-
-    # Features derivadas usadas no treino:
-    tem_suite: int     # 1 se tem suíte, 0 se não tem
-    tem_vaga: int      # 1 se tem vaga, 0 se não tem
 
 
 class VendaResposta(BaseModel):
