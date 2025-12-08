@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class ImovelEntrada(BaseModel):
     """
@@ -7,14 +7,18 @@ class ImovelEntrada(BaseModel):
     Ela deve ter EXATAMENTE as mesmas features usadas no treinamento.
     """
 
-    tipo: str          # Tipo do imóvel (ex: "Apartamento", "Casa")
-    bairro: str        # Bairro do imóvel
-    cidade: str        # Cidade do imóvel
+    tipo: str = Field(..., min_length=2, description="Tipo do imóvel (ex: casa, apartamento)")
+    bairro: str = Field(..., min_length=2)
+    cidade: str = Field(..., min_length=2)
     
-    area_util: float   # Área útil em metros quadrados (float)
-    quartos: int       # Número de quartos
-    suites: int        # Número de suítes
-    vagas: int         # Número de vagas de garagem
+    # Validação Numérica
+    # gt=0 -> Greater Than 0
+    area_util: float = Field(..., gt=0, description="Área deve ser maior que 0")
+    
+    # ge=0 -> Greater or Equal to 0
+    quartos: int = Field(..., ge=0, description="Não pode ser negativo")
+    suites: int = Field(..., ge=0, description="Não pode ser negativo")
+    vagas: int = Field(..., ge=0, description="Não pode ser negativo")
 
 
 class VendaResposta(BaseModel):
