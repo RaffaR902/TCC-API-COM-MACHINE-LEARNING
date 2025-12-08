@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 # ENDPOINT: VENDA
-@router.post("/venda", response_model=VendaResposta)
+@router.post("/prever/venda", response_model=VendaResposta)
 def prever_venda(imovel: ImovelEntrada):
     """
     Retorna apenas o valor previsto de venda.
@@ -33,7 +33,7 @@ def prever_venda(imovel: ImovelEntrada):
 
 
 # ENDPOINT: LOCAÇÃO
-@router.post("/locacao", response_model=LocacaoResposta)
+@router.post("/prever/locacao", response_model=LocacaoResposta)
 def prever_locacao(imovel: ImovelEntrada):
     """
     Retorna apenas o valor previsto de locação.
@@ -57,7 +57,7 @@ def prever_locacao(imovel: ImovelEntrada):
 
 
 # ENDPOINT: COMPLETO (Venda + Locação)
-@router.post("/completo", response_model=CompletoResposta)
+@router.post("/prever/completo", response_model=CompletoResposta)
 def prever_completo(imovel: ImovelEntrada):
     """
     Retorna previsão conjunta de valor de venda e locação.
