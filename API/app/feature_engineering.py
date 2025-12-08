@@ -2,6 +2,7 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
+import unicodedata
 
 # Caminho da pasta artifacts
 ARTIFACTS_PATH = os.path.join(os.path.dirname(__file__), "..", "artifacts")
@@ -41,6 +42,28 @@ class ArtifactLoader:
 # Instância global carregada ao iniciar a API
 artifact_loader = ArtifactLoader()
 
+# Normalização de texto
+def normalizar(texto: str) -> str:
+    """
+    Transforma o texto para:
+        Minúsculo
+        Sem acentos (ex: 'São' -> 'Sao')
+        Espaços viram underline (ex: 'Sao Paulo' -> 'sao_paulo')
+    """
+
+    if not isinstance(texto, str):
+        return texto
+        
+    # Tudo minúsculo
+    texto = texto.lower()
+    
+    # Remover acentos 
+    texto = unicodedata.normalize('NFKD', texto).encode('ASCII', 'ignore').decode('utf-8')
+    
+    # Substituir espaços por underline
+    texto = texto.strip().replace(' ', '_')
+    
+    return texto
 
 # Função de preprocessamento
 def preprocessar(df: pd.DataFrame, tipo: str):
@@ -62,6 +85,16 @@ def preprocessar(df: pd.DataFrame, tipo: str):
 
 
     # Feature Engineering 
+
+    # Bairro, Cidade e Tipo: minúsculo, sem acento, com underline
+    if "bairro" in df.columns:
+        df["bairro"] = df["bairro"].apply(normalizar)
+        
+    if "cidade" in df.columns:
+        df["cidade"] = df["cidade"].apply(normalizar)
+
+    if "tipo" in df.columns:
+        df["tipo"] = df["tipo"].apply(normalizar)
 
     # Razões Matemáticas
     df["quartos_area"] = df["quartos"] / df["area_util"]
